@@ -1,0 +1,36 @@
+name: Build MyOS ISO
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y grub-pc-bin grub-efi-amd64-bin xorriso mtools cpio gzip wget
+        
+    - name: Build ISO
+      run: |
+        chmod +x build.sh build-initrd.sh
+        bash -x ./build.sh
+        
+    - name: Verify ISO
+      run: |
+        ls -la
+        ls -la iso/boot/ || true
+        file myos.iso || true
+        
+    - name: Upload ISO
+      uses: actions/upload-artifact@v4
+      with:
+        name: myos-iso
+        path: myos.iso
+        retention-days: 30
