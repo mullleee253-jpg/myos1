@@ -1,0 +1,3 @@
+@echo off
+echo Opening MyOS Preview in browser...
+start "" "%~dp0preview\index.html"
